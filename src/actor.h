@@ -4,7 +4,7 @@
 #include <QPointF>
 #include <QPainter>
 
-class Actor : public QGraphicsItem {
+class Actor : public QGraphicsItem, public ObserverCollide {
 protected:
     QPointF position;
     float angle;
