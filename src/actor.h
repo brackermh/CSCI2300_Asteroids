@@ -1,21 +1,44 @@
 #pragma once
 
 #include <QGraphicsItem>
-#include <QPointF>
-#include <QPainter>
+#include <QSize>
+#include <QPoint>
+//#include <QPainter>
 
 class Actor : public QGraphicsItem, public ObserverCollide {
 protected:
-    QPointF position;
-    float angle;
-    QRectF boundingRect() const override;
+    QSize _screenSize;       //screen size boundaries passed to actors for posn wrapping
+    QPoint _position;           //actor position in x,y w/ floating point position
+    int _rotation;                 //actor rotation degrees
+    bool _collision;
+
+    //for determining collision
+    enum class ActorType{
+        player, enemy, bullet};
+    }
+    //QRectF boundingRect() const override; //set collision bounds
 
 public:
-    Actor();
+    //constructor gets passed screen size 
+    Actor(int w, int h, QGraphicsItem* parent = nullptr):
+        QGraphicsItem(parent), _screenSize(w,h), _position(0, 0) {};
+        
+    virtual ~Actor() = default;
 
-    void setRotation(int newAngle);
-    virtual void movement();
+    virtual void move() = 0;
+
+    //rotation functions
+    void setRotation(int degrees);
+    int getRotation()   const;
+
+    //position functions
+    void setPosition(int newPosX, int newPosY);
+    QPoint::QPoint getPosition()    const;
+
+    virtual ActorType getType() const = 0;
+
     void collision();
-    void setBoundary(float w, float l);
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+
+    void setScreenSize(int w, int h);
+    //void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;  //function that defines collision bounds
 };
